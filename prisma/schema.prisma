@@ -1,0 +1,39 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Appointment {
+  id        String    @id @default(cuid())
+  status    String
+  startedAt DateTime? @map(name: "started_at")
+  endedAt   DateTime? @map(name: "ended_at")
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @updatedAt @map(name: "updated_at")
+  deletedAt DateTime? @map(name: "deleted_at")
+  User      User?     @relation(fields: [userId], references: [id])
+  userId    Int?      @map(name: "user_id")
+
+  @@map(name: "appointments")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  chiName      String?       @map(name: "chi_name")
+  firstName    String?       @map(name: "first_name")
+  lastName     String?       @map(name: "last_name")
+  role         String?
+  createdAt    DateTime      @default(now()) @map(name: "created_at")
+  updatedAt    DateTime      @updatedAt @map(name: "updated_at")
+  deletedAt    DateTime?     @map(name: "deleted_at")
+  appointments Appointment[]
+
+  @@map(name: "users")
+}
