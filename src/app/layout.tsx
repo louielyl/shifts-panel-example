@@ -17,12 +17,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className='light'>
+    <html lang="en" className="light">
       <Head>
         <meta name="robots" content="noindex" />
-        <title>My Private Page</title>
+        <title>Shift Panel Example</title>
       </Head>
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-background light`}>
         <Providers>{children}</Providers>
       </body>
     </html>
