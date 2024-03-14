@@ -1,14 +1,24 @@
 "use client";
 
-import { Spacer, Spinner } from "@nextui-org/react";
+import { Button, Spacer, Spinner } from "@nextui-org/react";
 import Notice from "./components/Notice";
 import SearchBar from "./components/SearchBar";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Appointment, User } from "@prisma/client";
 import Shift from "./components/Shift";
+import { useCallback, useState } from "react";
 
 export default function Home() {
+  const [searchInput, setSearchInput] = useState("");
+  const searchInputContains = useCallback(
+    (input: string | null) => {
+      return Boolean(
+        input && input.toLowerCase().includes(searchInput.toLowerCase()),
+      );
+    },
+    [searchInput],
+  );
   const { data, isSuccess, isLoading } = useQuery<
     (Appointment & { User: User })[],
     unknown,
@@ -29,7 +39,13 @@ export default function Home() {
         (acc: Record<string, (Appointment & { User: User })[]>, cur) => {
           const month = dayjs(cur.startedAt).format("YYYY-MM");
           acc[month] = acc[month] || [];
-          acc[month].push(cur);
+          if (
+            !searchInput ||
+            searchInputContains(cur.User.chiName) ||
+            searchInputContains(cur.User.firstName) ||
+            searchInputContains(cur.User.lastName)
+          )
+            acc[month].push(cur);
           return acc;
         },
         {},
@@ -37,13 +53,16 @@ export default function Home() {
   });
 
   return (
-    <main className="m-6 flex flex-1 flex-col bg-white p-6 md:max-h-[calc(100vh_-_4rem)]">
+    <main className="m-6 flex flex-1 flex-col bg-white p-6 md:h-[calc(100vh_-_4rem)]">
       <Notice />
       <Spacer y={4} />
-      <SearchBar />
+      <SearchBar
+        value={searchInput}
+        onChange={(value) => setSearchInput(value)}
+      />
       <Spacer y={4} />
       {isLoading ? (
-        <div className="grid place-items-center">
+        <div className="grid h-full place-items-center">
           <Spinner size="lg" />
         </div>
       ) : (
