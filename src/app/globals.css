@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* NOTE: border color between slot*/
+.custom-slot {
+	border-top: solid theme("colors.gray.100") theme("borderWidth.2");
+}
+
+.custom-subheader+.custom-slot {
+	border-top: unset;
+}
+
+@media (min-width: 768px) {
+
+	.custom-shift,
+	.custom-shift * {
+		min-width: fit-content;
+	}
+}
