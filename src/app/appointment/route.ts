@@ -7,6 +7,7 @@ export async function GET() {
 			{ endedAt: "asc" },
 			{ createdAt: "asc" },
 			{ userId: "asc" },
+			{ id: "asc" },
 		],
 		include: { User: true },
 	});
