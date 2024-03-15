@@ -1,33 +1,26 @@
 import { Checkbox } from "@nextui-org/react";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useState } from "react";
 import { RoleTag } from "./RoleTag";
-import { Role, Status } from "@/types";
 import StatusSelect from "./StatusSelect";
 import StatusDisplay from "./StatusDisplay";
+import { appointmentSerialiser, userSerialiser } from "./utils";
+import { Controller, useFormContext } from "react-hook-form";
 
 export default function Slot({
   appointment,
   user,
   onUpdate,
 }: {
-  appointment: {
-    status: Status | null;
-    startedAt: Date | null;
-    endedAt: Date | null;
-  };
-  user: {
-    id: number;
-    chiName: string | null;
-    firstName: string | null;
-    lastName: string | null;
-    role: Role | null;
-  };
+  appointment: ReturnType<typeof appointmentSerialiser>;
+  user: ReturnType<typeof userSerialiser>;
   onUpdate: (confirm: boolean) => void;
 }) {
+  const { register } = useFormContext();
+
   return (
     <div className="custom-slot flex gap-2">
-      <Checkbox className="ml-2 self-center" />
+      <input type="checkbox" {...register(appointment.id)} />
       <div className="my-2 flex flex-col gap-1">
         <p>
           {dayjs(appointment.startedAt).format("H:mma")}-
