@@ -21,7 +21,7 @@ export async function PATCH(request: Request) {
 	const response = await Promise.all(
 		data.map(async (datum) =>
 			prisma.appointment.update({
-				where: { id: datum.id },
+				where: { id: datum.id, status: "PENDING" },
 				data: {
 					status: datum.status,
 				},
