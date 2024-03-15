@@ -1,9 +1,9 @@
 "use client";
 
-import { Button, Spacer, Spinner } from "@nextui-org/react";
+import { Spacer, Spinner } from "@nextui-org/react";
 import Notice from "./components/Notice";
 import SearchBar from "./components/SearchBar";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Appointment, User } from "@prisma/client";
 import Shift from "./components/Shift";
@@ -11,6 +11,7 @@ import { useCallback, useState } from "react";
 
 export default function Home() {
   const [searchInput, setSearchInput] = useState("");
+  
   const searchInputContains = useCallback(
     (input: string | null) => {
       return Boolean(
@@ -18,6 +19,7 @@ export default function Home() {
       );
     },
     [searchInput],
+
   );
   const { data, isSuccess, isLoading } = useQuery<
     (Appointment & { User: User })[],
