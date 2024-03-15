@@ -9,6 +9,7 @@ import StatusDisplay from "./StatusDisplay";
 export default function Slot({
   appointment,
   user,
+  onUpdate,
 }: {
   appointment: {
     status: Status | null;
@@ -22,6 +23,7 @@ export default function Slot({
     lastName: string | null;
     role: Role | null;
   };
+  onUpdate: (confirm: boolean) => void;
 }) {
   return (
     <div className="custom-slot flex gap-2">
@@ -36,7 +38,7 @@ export default function Slot({
         </p>
         <RoleTag role={user.role} />
         {appointment.status === "PENDING" ? (
-          <StatusSelect onClick={()=>{}} />
+          <StatusSelect onClick={onUpdate} />
         ) : (
           <StatusDisplay status={appointment.status} />
         )}
