@@ -4,37 +4,17 @@ import dayjs from "dayjs";
 import SubHeader from "./SubHeader";
 import Slot from "./Slot";
 import { Appointment, User } from "@prisma/client";
-import { Role, Status } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import useUpdateAppointments from "@/app/hooks/useUpdateAppointments";
+import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
+import { appointmentSerialiser, userSerialiser } from "./utils";
 
-function userSerialiser(data: Appointment & { User: User }): {
-  id: number;
-  chiName: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  role: Role | null;
-} {
-  return {
-    id: data.User.id,
-    chiName: data.User.chiName,
-    firstName: data.User.firstName,
-    lastName: data.User.lastName,
-    role: data.User.role as Role,
-  };
-}
+type Inputs = {
+  id: string;
+  isConfirmed: boolean;
+};
 
-function appointmentSerialiser(data: Appointment & { User: User }): {
-  status: Status | null;
-  startedAt: Date | null;
-  endedAt: Date | null;
-} {
-  return {
-    status: data.status as Status,
-    startedAt: data.startedAt,
-    endedAt: data.endedAt,
-  };
-}
+const getDayFormat = (date: Date | null) => dayjs(date).format("YYYY-MM-DD");
 
 export default function Shift({
   yearMonth,
@@ -44,6 +24,10 @@ export default function Shift({
   appointments: (Appointment & { User: User })[];
 }) {
   const queryClient = useQueryClient();
+
+  const methods = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
   const { mutate } = useUpdateAppointments({
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["shift-data"] });
@@ -51,6 +35,7 @@ export default function Shift({
     onSuccess: () => { },
     onError: () => { },
   });
+
   const updateAppointment = (appointmentId: string, isConfirmed: boolean) =>
     mutate([
       {
@@ -60,47 +45,43 @@ export default function Shift({
     ]);
 
   return (
-    <div className="custom-shift flex flex-col rounded-lg border-2 border-gray-200 md:relative md:max-h-full md:overflow-y-scroll">
-      <Header
-        date={dayjs(yearMonth).toDate()}
-        isDisabled
-        count={appointments.length}
-      />
-      {appointments.map((appointment, index, array) => {
-        if (
-          index === 0 ||
-          dayjs(appointment.startedAt).format("YYYY-MM-DD") !==
-          dayjs(array[index - 1].startedAt).format("YYYY-MM-DD")
-        ) {
-          return (
-            <React.Fragment key={appointment.id}>
-              <SubHeader
-                key={dayjs(appointment.startedAt).format("YYYY-MM-DD")}
-                date={dayjs(appointment.startedAt).toDate()}
-              />
+    <FormProvider {...methods}>
+      <form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        className="custom-shift flex flex-col rounded-lg border-2 border-gray-200 md:relative md:max-h-full md:overflow-y-scroll"
+      >
+        <Header date={dayjs(yearMonth).toDate()} count={appointments.length} />
+        {Object.entries(
+          appointments.reduce(
+            (
+              acc: Record<string, (Appointment & { User: User })[]>,
+              appointment,
+            ) => {
+              acc[getDayFormat(appointment.startedAt)] =
+                acc[getDayFormat(appointment.startedAt)] || [];
+              acc[getDayFormat(appointment.startedAt)].push(appointment);
+              return acc;
+            },
+            {},
+          ),
+        ).map(([_, appointments]) => (
+          <SubHeader
+            key={getDayFormat(appointments[0].startedAt)}
+            date={dayjs(appointments[0].startedAt).toDate()}
+          >
+            {appointments.map((appointment) => (
               <Slot
+                key={appointment.id}
                 onUpdate={(isConfirmed) =>
                   updateAppointment(appointment.id, isConfirmed)
                 }
                 appointment={appointmentSerialiser(appointment)}
                 user={userSerialiser(appointment)}
               />
-            </React.Fragment >
-          );
-        } else {
-          return (
-            <React.Fragment  key={appointment.id}>
-              <Slot
-                onUpdate={(isConfirmed) =>
-                  updateAppointment(appointment.id, isConfirmed)
-                }
-                appointment={appointmentSerialiser(appointment)}
-                user={userSerialiser(appointment)}
-              />
-            </React.Fragment >
-          );
-        }
-      })}
-    </div>
+            ))}
+          </SubHeader>
+        ))}
+      </form>
+    </FormProvider>
   );
 }
