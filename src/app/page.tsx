@@ -11,7 +11,7 @@ import { useCallback, useState } from "react";
 
 export default function Home() {
   const [searchInput, setSearchInput] = useState("");
-  
+
   const searchInputContains = useCallback(
     (input: string | null) => {
       return Boolean(
@@ -19,9 +19,8 @@ export default function Home() {
       );
     },
     [searchInput],
-
   );
-  const { data, isSuccess, isLoading } = useQuery<
+  const { data: dataByMonth, isSuccess, isLoading } = useQuery<
     (Appointment & { User: User })[],
     unknown,
     { [key: string]: (Appointment & { User: User })[] }
@@ -70,8 +69,8 @@ export default function Home() {
       ) : (
         <div className="flex flex-col gap-4 md:flex-row md:overflow-x-scroll">
           {isSuccess &&
-            data &&
-            Object.entries(data).map(([yearMonth, appointments]) => (
+            dataByMonth &&
+            Object.entries(dataByMonth).map(([yearMonth, appointments]) => (
               <Shift
                 key={yearMonth}
                 yearMonth={yearMonth}
