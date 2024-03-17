@@ -11,16 +11,31 @@ export default function Slot({
   appointment,
   user,
   onUpdate,
+  checked,
 }: {
   appointment: ReturnType<typeof appointmentSerialiser>;
   user: ReturnType<typeof userSerialiser>;
   onUpdate: (confirm: boolean) => void;
+  shouldRegister?: boolean;
+  checked?: boolean;
 }) {
-  const { register } = useFormContext();
+  const { control } = useFormContext();
 
   return (
-    <div className="custom-slot flex gap-2">
-      <input type="checkbox" {...register(appointment.id)} />
+    <div className="custom-slot flex px-2">
+      <Controller
+        name={appointment.id}
+        control={control}
+        render={({ field }) => (
+          <Checkbox
+            isSelected={checked}
+            className={appointment.status !== "PENDING" ? "invisible" : ""}
+            disabled={appointment.status !== "PENDING"}
+            {...field}
+          />
+        )}
+      />
+
       <div className="my-2 flex flex-col gap-1">
         <p>
           {dayjs(appointment.startedAt).format("H:mma")}-

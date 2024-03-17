@@ -9,9 +9,8 @@ import useUpdateAppointments from "@/app/hooks/useUpdateAppointments";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { appointmentSerialiser, userSerialiser } from "./utils";
 
-type Inputs = {
-  id: string;
-  isConfirmed: boolean;
+type Input = {
+  [id: string]: boolean;
 };
 
 const getDayFormat = (date: Date | null) => dayjs(date).format("YYYY-MM-DD");
@@ -24,17 +23,46 @@ export default function Shift({
   appointments: (Appointment & { User: User })[];
 }) {
   const queryClient = useQueryClient();
-
-  const methods = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
-
+  const methods = useForm<Input>();
   const { mutate } = useUpdateAppointments({
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["shift-data"] });
-    },
-    onSuccess: () => { },
-    onError: () => { },
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["shift-data"] }),
   });
+
+  methods.watch();
+
+  const pendingApppointments = appointments.filter(
+    (appointment) => appointment.status === "PENDING",
+  );
+
+  const groupOnClick = (appointments: Appointment[]) => {
+    const allAreSelected = appointments.every(
+      (appointment) => methods.getValues(appointment.id) === true,
+    );
+    const someAreSelected = appointments.some(
+      (appointment) => methods.getValues(appointment.id) === true,
+    );
+    if (someAreSelected && !allAreSelected) {
+      appointments.forEach((appointment) =>
+        methods.setValue(appointment.id, true),
+      );
+    } else {
+      appointments.forEach((appointment) =>
+        methods.setValue(appointment.id, !someAreSelected),
+      );
+    }
+  };
+
+  const onSubmit: SubmitHandler<Input> = (data) => {
+    mutate(
+      Object.entries(data)
+        .filter((datum) => datum[1] === true)
+        .map((datum) => ({
+          id: datum[0],
+          status: datum[1] ? "CONFIRMED" : "DECLINED",
+        })),
+    );
+  };
 
   const updateAppointment = (appointmentId: string, isConfirmed: boolean) =>
     mutate([
@@ -50,7 +78,16 @@ export default function Shift({
         onSubmit={methods.handleSubmit(onSubmit)}
         className="custom-shift flex flex-col rounded-lg border-2 border-gray-200 md:relative md:max-h-full md:overflow-y-scroll"
       >
-        <Header date={dayjs(yearMonth).toDate()} count={appointments.length} />
+        <Header
+          checked={pendingApppointments.every(
+            (appointment) => methods.getValues(appointment.id) === true,
+          )}
+          isDisabled={pendingApppointments.length === 0}
+          isSelectable={pendingApppointments.length !== 0}
+          onCheck={() => groupOnClick(pendingApppointments)}
+          date={dayjs(yearMonth).toDate()}
+          count={appointments.length}
+        />
         {Object.entries(
           appointments.reduce(
             (
@@ -64,23 +101,35 @@ export default function Shift({
             },
             {},
           ),
-        ).map(([_, appointments]) => (
-          <SubHeader
-            key={getDayFormat(appointments[0].startedAt)}
-            date={dayjs(appointments[0].startedAt).toDate()}
-          >
-            {appointments.map((appointment) => (
-              <Slot
-                key={appointment.id}
-                onUpdate={(isConfirmed) =>
-                  updateAppointment(appointment.id, isConfirmed)
-                }
-                appointment={appointmentSerialiser(appointment)}
-                user={userSerialiser(appointment)}
-              />
-            ))}
-          </SubHeader>
-        ))}
+        ).map(([yearMonth, appointments]) => {
+          const pendingApppointments = appointments.filter(
+            (appointment) => appointment.status === "PENDING",
+          );
+          return (
+            <SubHeader
+              checked={pendingApppointments.every(
+                (appointment) => methods.getValues(appointment.id) === true,
+              )}
+              onCheck={() => groupOnClick(pendingApppointments)}
+              isSelectable={pendingApppointments.length !== 0}
+              key={yearMonth}
+              date={dayjs(yearMonth).toDate()}
+            >
+              {appointments.map((appointment) => (
+                <Slot
+                  checked={methods.getValues(appointment.id) || false}
+                  shouldRegister={appointment.status === "PENDING"}
+                  key={appointment.id}
+                  onUpdate={(isConfirmed) =>
+                    updateAppointment(appointment.id, isConfirmed)
+                  }
+                  appointment={appointmentSerialiser(appointment)}
+                  user={userSerialiser(appointment)}
+                />
+              ))}
+            </SubHeader>
+          );
+        })}
       </form>
     </FormProvider>
   );

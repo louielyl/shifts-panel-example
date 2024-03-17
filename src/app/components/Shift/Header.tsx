@@ -6,20 +6,37 @@ export default function Header({
   date,
   count,
   isDisabled,
+  isSelectable,
+  checked,
+  onCheck,
 }: {
   date: Date;
   count: Number;
-  isDisabled: boolean;
+  isDisabled?: boolean;
+  isSelectable?: boolean;
+  checked?: boolean;
+  onCheck?: () => void;
 }) {
   return (
-    <div className="flex items-center gap-3 bg-gray-100 px-2 py-4">
-      <Checkbox></Checkbox>
-      <div className="flex flex-1 flex-wrap gap-x-unit-2 md:mr-12">
-        <p className="font-semibold">{dayjs(date).format("MMMM YYYY")}</p>
-        {/* TODO: add i18n plural */}
-        <p>({count.toString()} held shifts)</p>
-      </div>
-      <Button className={isDisabled ? "bg-gray-300 text-white" : ""}>
+    <div className="flex items-center bg-gray-100 px-2 py-4">
+      <Checkbox
+        isSelected={checked}
+        classNames={{
+          wrapper: isSelectable ? undefined : "invisible",
+        }}
+        onClick={onCheck}
+      >
+        <label className="flex flex-1 flex-wrap gap-x-unit-2 md:mr-12">
+          <p className="font-semibold">{dayjs(date).format("MMMM YYYY")}</p>
+          <p>({count.toString()} held shifts)</p>
+        </label>
+      </Checkbox>
+      <Button
+        type="submit"
+        className="text-white ml-auto md:ml-0"
+        color={checked ? "success" : "default"}
+        disabled={isDisabled}
+      >
         Confirm
       </Button>
     </div>
