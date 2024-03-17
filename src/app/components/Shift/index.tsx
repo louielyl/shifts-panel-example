@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import useUpdateAppointments from "@/app/hooks/useUpdateAppointments";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { appointmentSerialiser, userSerialiser } from "./utils";
+import { toast } from "react-toastify";
 
 type Input = {
   [id: string]: boolean;
@@ -24,7 +25,7 @@ export default function Shift({
 }) {
   const queryClient = useQueryClient();
   const methods = useForm<Input>();
-  const { mutate } = useUpdateAppointments({
+  const { mutateAsync } = useUpdateAppointments({
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["shift-data"] }),
   });
@@ -54,23 +55,31 @@ export default function Shift({
   };
 
   const onSubmit: SubmitHandler<Input> = (data) => {
-    mutate(
+    mutateAsync(
       Object.entries(data)
         .filter((datum) => datum[1] === true)
         .map((datum) => ({
           id: datum[0],
           status: datum[1] ? "CONFIRMED" : "DECLINED",
         })),
-    );
+    )
+      .then(() => toast.success(`Confirmed ${Object.keys(data).length} shifts`))
+      .catch(() => toast.error("Update failed"));
   };
 
   const updateAppointment = (appointmentId: string, isConfirmed: boolean) =>
-    mutate([
+    mutateAsync([
       {
         id: appointmentId,
         status: isConfirmed ? "CONFIRMED" : "DECLINED",
       },
-    ]);
+    ])
+      .then(() =>
+        toast.success(
+          `${isConfirmed ? "Confirmed" : "Declined"} appointment on ${dayjs(appointments.find((appointment) => appointment.id === appointmentId)?.startedAt).format("YYYY-MM-DD")}`,
+        ),
+      )
+      .catch(() => toast.error("Update failed"));
 
   return (
     <FormProvider {...methods}>
