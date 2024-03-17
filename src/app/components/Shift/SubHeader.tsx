@@ -21,7 +21,10 @@ export default function SubHeader({
         <Checkbox
           isSelected={checked}
           onClick={isSelectable ? onCheck : undefined}
-          classNames={{ wrapper: isSelectable ? undefined : "invisible" }}
+          classNames={{
+            wrapper: isSelectable ? undefined : "invisible",
+            base: isSelectable ? undefined : "cursor-default",
+          }}
         >
           <label>{dayjs(date).format("DD MMMM")}</label>
         </Checkbox>

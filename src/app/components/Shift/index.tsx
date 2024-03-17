@@ -79,10 +79,18 @@ export default function Shift({
         className="custom-shift flex flex-col rounded-lg border-2 border-gray-200 md:relative md:max-h-full md:overflow-y-scroll"
       >
         <Header
-          checked={pendingApppointments.every(
-            (appointment) => methods.getValues(appointment.id) === true,
-          )}
-          isDisabled={pendingApppointments.length === 0}
+          checked={
+            pendingApppointments.length > 0 &&
+            pendingApppointments.every(
+              (appointment) => methods.getValues(appointment.id) === true,
+            )
+          }
+          canSubmit={
+            pendingApppointments.length > 0 &&
+            pendingApppointments.some(
+              (appointment) => methods.getValues(appointment.id) === true,
+            )
+          }
           isSelectable={pendingApppointments.length !== 0}
           onCheck={() => groupOnClick(pendingApppointments)}
           date={dayjs(yearMonth).toDate()}

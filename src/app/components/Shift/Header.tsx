@@ -5,16 +5,16 @@ import dayjs from "dayjs";
 export default function Header({
   date,
   count,
-  isDisabled,
   isSelectable,
   checked,
+  canSubmit,
   onCheck,
 }: {
   date: Date;
   count: Number;
-  isDisabled?: boolean;
   isSelectable?: boolean;
   checked?: boolean;
+  canSubmit?: boolean;
   onCheck?: () => void;
 }) {
   return (
@@ -22,6 +22,7 @@ export default function Header({
       <Checkbox
         isSelected={checked}
         classNames={{
+          base: isSelectable ? undefined : "cursor-default",
           wrapper: isSelectable ? undefined : "invisible",
         }}
         onClick={onCheck}
@@ -33,9 +34,9 @@ export default function Header({
       </Checkbox>
       <Button
         type="submit"
-        className="text-white ml-auto md:ml-0"
-        color={checked ? "success" : "default"}
-        disabled={isDisabled}
+        className="ml-auto text-white md:ml-0"
+        color={canSubmit ? "success" : "default"}
+        disabled={!canSubmit}
       >
         Confirm
       </Button>
