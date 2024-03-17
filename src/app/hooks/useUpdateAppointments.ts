@@ -8,11 +8,15 @@ export default function useUpdateAppointments(
 	return useMutation({
 		mutationKey: ["shift-data"],
 		mutationFn: async (updateInfo: UpdateInfo) => {
-			const respond = await fetch("/appointment", {
-				method: "PATCH",
-				body: JSON.stringify(updateInfo),
-			});
-			return await respond.json();
+			try {
+				const respond = await fetch("/appointment", {
+					method: "PATCH",
+					body: JSON.stringify(updateInfo),
+				});
+				return await respond.json();
+			} catch (error) {
+				throw error;
+			}
 		},
 		...options,
 	});
