@@ -10,18 +10,20 @@ export default function StatusSelect({
     <div className="flex gap-3">
       <Button
         onClick={() => onClick(false)}
-        children="Decline"
         className="w-fit"
         color="danger"
         variant="bordered"
-      />
+      >
+        Decline
+      </Button>
       <Button
         onClick={() => onClick(true)}
-        children="Confirm"
         className="w-fit text-white"
         color="success"
         variant="solid"
-      />
+      >
+        Confirm
+      </Button>
     </div>
   );
 }

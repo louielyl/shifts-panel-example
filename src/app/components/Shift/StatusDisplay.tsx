@@ -6,22 +6,24 @@ export default function StatusDisplay({ status }: { status: Status | null }) {
   if (status === "DECLINED")
     return (
       <Button
-        children="Declined"
-        className="text-danger-700 w-fit cursor-default"
+        className="w-fit cursor-default text-danger-700"
         color="danger"
         disableAnimation
         variant="flat"
-      />
+      >
+        Declined
+      </Button>
     );
   if (status === "CONFIRMED")
     return (
       <Button
-        children="Confirmed"
-        className="text-success-700 w-fit cursor-default"
+        className="w-fit cursor-default text-success-700"
         color="success"
         disableAnimation
         variant="flat"
-      />
+      >
+        Confirmed
+      </Button>
     );
   return <></>;
 }
