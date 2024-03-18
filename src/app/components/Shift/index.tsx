@@ -9,6 +9,7 @@ import useUpdateAppointments from "@/app/hooks/useUpdateAppointments";
 import { useForm, SubmitHandler, FormProvider } from "react-hook-form";
 import { appointmentSerialiser, userSerialiser } from "./utils";
 import { toast } from "react-toastify";
+import { AnimatePresence, motion } from "framer-motion";
 
 type Input = {
   [id: string]: boolean;
@@ -105,48 +106,64 @@ export default function Shift({
           date={dayjs(yearMonth).toDate()}
           count={appointments.length}
         />
-        {Object.entries(
-          appointments.reduce(
-            (
-              acc: Record<string, (Appointment & { User: User })[]>,
-              appointment,
-            ) => {
-              acc[getDayFormat(appointment.startedAt)] =
-                acc[getDayFormat(appointment.startedAt)] || [];
-              acc[getDayFormat(appointment.startedAt)].push(appointment);
-              return acc;
-            },
-            {},
-          ),
-        ).map(([yearMonth, appointments]) => {
-          const pendingApppointments = appointments.filter(
-            (appointment) => appointment.status === "PENDING",
-          );
-          return (
-            <SubHeader
-              checked={pendingApppointments.every(
-                (appointment) => methods.getValues(appointment.id) === true,
-              )}
-              onCheck={() => groupOnClick(pendingApppointments)}
-              isSelectable={pendingApppointments.length !== 0}
-              key={yearMonth}
-              date={dayjs(yearMonth).toDate()}
-            >
-              {appointments.map((appointment) => (
-                <Slot
-                  checked={methods.getValues(appointment.id) || false}
-                  shouldRegister={appointment.status === "PENDING"}
-                  key={appointment.id}
-                  onUpdate={(isConfirmed) =>
-                    updateAppointment(appointment.id, isConfirmed)
-                  }
-                  appointment={appointmentSerialiser(appointment)}
-                  user={userSerialiser(appointment)}
-                />
-              ))}
-            </SubHeader>
-          );
-        })}
+        <AnimatePresence>
+          {Object.entries(
+            appointments.reduce(
+              (
+                acc: Record<string, (Appointment & { User: User })[]>,
+                appointment,
+              ) => {
+                acc[getDayFormat(appointment.startedAt)] =
+                  acc[getDayFormat(appointment.startedAt)] || [];
+                acc[getDayFormat(appointment.startedAt)].push(appointment);
+                return acc;
+              },
+              {},
+            ),
+          ).map(([yearMonth, appointments]) => {
+            const pendingApppointments = appointments.filter(
+              (appointment) => appointment.status === "PENDING",
+            );
+            return (
+              <motion.div
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                initial={{ opacity: 0 }}
+                key={yearMonth}
+                layout
+                transition={{ duration: 0.2 }}
+              >
+                <SubHeader
+                  checked={pendingApppointments.every(
+                    (appointment) => methods.getValues(appointment.id) === true,
+                  )}
+                  onCheck={() => groupOnClick(pendingApppointments)}
+                  isSelectable={pendingApppointments.length !== 0}
+                  date={dayjs(yearMonth).toDate()}
+                >
+                  <AnimatePresence>
+                    {appointments.map((appointment) => (
+                      <motion.div
+                        key={appointment.id}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Slot
+                          checked={methods.getValues(appointment.id) || false}
+                          shouldRegister={appointment.status === "PENDING"}
+                          onUpdate={(isConfirmed) =>
+                            updateAppointment(appointment.id, isConfirmed)
+                          }
+                          appointment={appointmentSerialiser(appointment)}
+                          user={userSerialiser(appointment)}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </SubHeader>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
       </form>
     </FormProvider>
   );

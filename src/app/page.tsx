@@ -11,6 +11,7 @@ import { useCallback, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-toastify";
 import useResetAppointments from "./hooks/useDeleteAppointments";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Home() {
   const [searchInput, setSearchInput] = useState("");
@@ -24,6 +25,7 @@ export default function Home() {
     },
     [searchInput],
   );
+
   const {
     data: dataByMonth,
     refetch,
@@ -65,6 +67,7 @@ export default function Home() {
           {},
         ),
   });
+
   const { mutate: resetAppointments } = useResetAppointments({
     onSettled: () => {
       refetch();
@@ -107,15 +110,23 @@ export default function Home() {
         </div>
       ) : (
         <div className="flex flex-col gap-4 md:flex-row md:overflow-x-scroll">
-          {isSuccess &&
-            dataByMonth &&
-            Object.entries(dataByMonth).map(([yearMonth, appointments]) => (
-              <Shift
-                key={yearMonth}
-                yearMonth={yearMonth}
-                appointments={appointments}
-              />
-            ))}
+          <AnimatePresence>
+            {isSuccess &&
+              dataByMonth &&
+              Object.entries(dataByMonth).map(([yearMonth, appointments]) => (
+                <motion.div
+                  className="min-w-fit"
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0 }}
+                  key={yearMonth}
+                  layout
+                  transition={{ duration: 0.2 }}
+                >
+                  <Shift yearMonth={yearMonth} appointments={appointments} />
+                </motion.div>
+              ))}
+          </AnimatePresence>
         </div>
       )}
     </main>
