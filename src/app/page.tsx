@@ -9,6 +9,8 @@ import { Appointment, User } from "@prisma/client";
 import Shift from "./components/Shift";
 import { useCallback, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/solid";
+import { toast } from "react-toastify";
+import useResetAppointments from "./hooks/useDeleteAppointments";
 
 export default function Home() {
   const [searchInput, setSearchInput] = useState("");
@@ -24,6 +26,7 @@ export default function Home() {
   );
   const {
     data: dataByMonth,
+    refetch,
     isSuccess,
     isLoading,
   } = useQuery<
@@ -62,6 +65,14 @@ export default function Home() {
           {},
         ),
   });
+  const { mutate: resetAppointments } = useResetAppointments({
+    onSettled: () => {
+      refetch();
+    },
+    onSuccess: () => {
+      toast.success("Reset shifts data successfully");
+    },
+  });
 
   return (
     <main className="m-6 flex flex-1 flex-col bg-white p-6 md:h-[calc(100vh_-_4rem)]">
@@ -80,7 +91,12 @@ export default function Home() {
         >
           <label className="min-w-fit">Pending only</label>
         </Checkbox>
-        <Button color="danger" className="ml-auto text-white" isIconOnly>
+        <Button
+          onClick={() => resetAppointments()}
+          color="danger"
+          className="ml-auto text-white"
+          isIconOnly
+        >
           <TrashIcon className="h-7 w-7" />
         </Button>
       </div>
