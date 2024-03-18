@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Checkbox, Spacer, Spinner } from "@nextui-org/react";
+import { Button, Checkbox, Spacer, Spinner, Switch } from "@nextui-org/react";
 import Notice from "./components/Notice";
 import SearchBar from "./components/SearchBar";
 import { useQuery } from "@tanstack/react-query";
@@ -87,13 +87,12 @@ export default function Home() {
           value={searchInput}
           onChange={(value) => setSearchInput(value)}
         />
-        <Checkbox
+        <Switch
           isSelected={searchPendingOnly}
-          classNames={{ label: "min-w-fit" }}
-          onClick={() => setSearchPendingOnly((cur) => !cur)}
+          onValueChange={() => setSearchPendingOnly((cur) => !cur)}
         >
-          <label className="min-w-fit">Pending only</label>
-        </Checkbox>
+          Show pending shifts only
+        </Switch>
         <Button
           onClick={() => resetAppointments()}
           color="danger"
