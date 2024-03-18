@@ -1,6 +1,6 @@
 import { Checkbox } from "@nextui-org/react";
 import dayjs from "dayjs";
-import React, { useState } from "react";
+import React from "react";
 import { RoleTag } from "./RoleTag";
 import StatusSelect from "./StatusSelect";
 import StatusDisplay from "./StatusDisplay";

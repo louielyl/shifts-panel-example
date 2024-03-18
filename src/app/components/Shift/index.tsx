@@ -55,15 +55,16 @@ export default function Shift({
   };
 
   const onSubmit: SubmitHandler<Input> = (data) => {
+    const submittingData = Object.entries(data).filter(
+      (datum) => datum[1] === true,
+    );
     mutateAsync(
-      Object.entries(data)
-        .filter((datum) => datum[1] === true)
-        .map((datum) => ({
-          id: datum[0],
-          status: datum[1] ? "CONFIRMED" : "DECLINED",
-        })),
+      submittingData.map((datum) => ({
+        id: datum[0],
+        status: datum[1] ? "CONFIRMED" : "DECLINED",
+      })),
     )
-      .then(() => toast.success(`Confirmed ${Object.keys(data).length} shifts`))
+      .then(() => toast.success(`Confirmed ${submittingData.length} shifts`))
       .catch(() => toast.error("Update failed"));
   };
 
