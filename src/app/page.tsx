@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import { Appointment, User } from "@prisma/client";
 import Shift from "./components/Shift";
 import { useCallback, useState } from "react";
-import { TrashIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-toastify";
 import useResetAppointments from "./hooks/useDeleteAppointments";
 import { AnimatePresence, motion } from "framer-motion";
@@ -103,7 +103,7 @@ export default function Home() {
           className="ml-auto text-white"
           isIconOnly
         >
-          <TrashIcon className="h-7 w-7" />
+          <ArrowPathIcon className="h-7 w-7" />
         </Button>
       </div>
       <Spacer y={4} />
