@@ -38,7 +38,7 @@ npm run dev
 ### Extra Features
 
 - [x] React Query for async state management
-- [x] React Hook Form for form scalability
+- [x] React-hook-form for form scalability
 - [x] Select by month/ date
 - [x] Toast for update and reset
 - [x] Layout animations
