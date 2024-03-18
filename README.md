@@ -1,21 +1,19 @@
 ## Getting Started
 
-First, run this command to generate the prisma client.
+First, run this command install packages.
 
 ```bash
-npx prisma generate
+pnpm install
+# or any node js package manage you like
+npm install
 ```
 
 Then, run this command to start the dev server locally.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
+# or any node js package manage you like
+npm run dev
 ```
 
 ## Features
@@ -39,7 +37,11 @@ bun dev
 
 ### Extra Features
 
-- [x] Deployment on Vercel
-- [x] PostgreSQL
 - [x] Loading Spinner
 - [x] Select by month/ date
+- [x] Toast for update and reset
+- [x] Filter by pending status
+- [x] Reset button to update the DB
+- [x] Deployment on Vercel
+- [x] PostgreSQL DB
+- [x] Prisma
