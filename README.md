@@ -59,3 +59,4 @@ npm run dev
 - [ ] Extract useQuery hooks
 - [ ] Add batch decline button and relevant logic, with minor changes to the current form values
 - [ ] Throttle requests
+- [ ] Add small menu and shadow scroll
