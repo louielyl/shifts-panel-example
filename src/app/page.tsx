@@ -78,10 +78,10 @@ export default function Home() {
   });
 
   return (
-    <main className="m-6 flex flex-1 flex-col bg-white p-6 md:h-[calc(100vh_-_4rem)]">
+    <main className="m-6 flex min-h-[calc(100vh_-_4rem)] flex-1 flex-col bg-white p-6 md:h-[calc(100vh_-_4rem)]">
       <Notice />
       <Spacer y={4} />
-      <div className="grid grid-cols-2 gap-3 md:flex">
+      <div className="grid gap-3 md:flex">
         <SearchBar
           extraClassNames="col-span-2"
           value={searchInput}
@@ -108,10 +108,11 @@ export default function Home() {
           <Spinner size="lg" />
         </div>
       ) : (
-        <div className="flex flex-col gap-4 md:flex-row md:overflow-x-scroll">
+        <div
+          className={`flex flex-col gap-4 md:flex-row ${isSuccess && Object.entries(dataByMonth).length > 0 ? "md:overflow-x-scroll" : "grid flex-1 place-items-center"}`}
+        >
           <AnimatePresence>
-            {isSuccess &&
-              dataByMonth &&
+            {isSuccess && Object.entries(dataByMonth).length > 0 ? (
               Object.entries(dataByMonth).map(([yearMonth, appointments]) => (
                 <motion.div
                   className="min-w-fit"
@@ -124,7 +125,10 @@ export default function Home() {
                 >
                   <Shift yearMonth={yearMonth} appointments={appointments} />
                 </motion.div>
-              ))}
+              ))
+            ) : (
+              <motion.p>No Shift to display</motion.p>
+            )}
           </AnimatePresence>
         </div>
       )}
