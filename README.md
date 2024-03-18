@@ -37,11 +37,14 @@ npm run dev
 
 ### Extra Features
 
-- [x] Loading Spinner
+- [x] React Query for async state management
+- [x] React Hook Form for form scalability
 - [x] Select by month/ date
 - [x] Toast for update and reset
+- [x] Layout animations
 - [x] Filter by pending status
 - [x] Reset button to update the DB
 - [x] Deployment on Vercel
 - [x] PostgreSQL DB
 - [x] Prisma
+- [x] Loading Spinner
