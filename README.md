@@ -48,3 +48,14 @@ npm run dev
 - [x] PostgreSQL DB
 - [x] Prisma
 - [x] Loading Spinner
+
+## Todo
+
+- [ ] Replace unclickable button with correct html tags
+- [ ] Replace current search logic with searching library like fuse.js
+- [ ] Dry reset feature
+- [ ] Add reset pop up modal
+- [ ] Add enum for statuses
+- [ ] Extract useQuery hooks
+- [ ] Add batch decline button and relevant logic, with minor changes to the current form values
+- [ ] Throttle requests
