@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Checkbox, Spacer, Spinner, Switch } from "@nextui-org/react";
+import { Button, Spacer, Spinner, Switch } from "@nextui-org/react";
 import Notice from "./components/Notice";
 import SearchBar from "./components/SearchBar";
 import { useQuery } from "@tanstack/react-query";
@@ -20,7 +20,11 @@ export default function Home() {
   const searchInputContains = useCallback(
     (input: string | null) => {
       return Boolean(
-        input && input.toLowerCase().includes(searchInput.toLowerCase()),
+        searchInput
+          .split(" ")
+          .some(
+            (word) => input && input.toLowerCase().includes(word.toLowerCase()),
+          ),
       );
     },
     [searchInput],
