@@ -31,7 +31,7 @@ export default function Home() {
     unknown,
     { [key: string]: (Appointment & { User: User })[] }
   >({
-    queryKey: ["shift-data"],
+    queryKey: ["shifts"],
     queryFn: async () => {
       try {
         const respond = await fetch("/appointment");

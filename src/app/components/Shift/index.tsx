@@ -26,8 +26,7 @@ export default function Shift({
   const queryClient = useQueryClient();
   const methods = useForm<Input>();
   const { mutateAsync } = useUpdateAppointments({
-    onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: ["shift-data"] }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["shifts"] }),
   });
 
   methods.watch();

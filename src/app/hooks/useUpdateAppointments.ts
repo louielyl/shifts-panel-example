@@ -6,7 +6,7 @@ export default function useUpdateAppointments(
 	options?: UseMutationOptions<any, Error, UpdateInfo, unknown>,
 ) {
 	return useMutation({
-		mutationKey: ["shift-data"],
+		mutationKey: ["shifts", "update"],
 		mutationFn: async (updateInfo: UpdateInfo) => {
 			try {
 				const respond = await fetch("/appointment", {
