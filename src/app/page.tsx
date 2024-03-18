@@ -1,6 +1,6 @@
 "use client";
 
-import { Checkbox, Spacer, Spinner } from "@nextui-org/react";
+import { Button, Checkbox, Spacer, Spinner } from "@nextui-org/react";
 import Notice from "./components/Notice";
 import SearchBar from "./components/SearchBar";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import { Appointment, User } from "@prisma/client";
 import Shift from "./components/Shift";
 import { useCallback, useState } from "react";
+import { TrashIcon } from "@heroicons/react/24/solid";
 
 export default function Home() {
   const [searchInput, setSearchInput] = useState("");
@@ -66,17 +67,22 @@ export default function Home() {
     <main className="m-6 flex flex-1 flex-col bg-white p-6 md:h-[calc(100vh_-_4rem)]">
       <Notice />
       <Spacer y={4} />
-      <div className="flex gap-2">
+      <div className="grid grid-cols-2 gap-3 md:flex">
         <SearchBar
+          extraClassNames="col-span-2"
           value={searchInput}
           onChange={(value) => setSearchInput(value)}
         />
         <Checkbox
           isSelected={searchPendingOnly}
+          classNames={{ label: "min-w-fit" }}
           onClick={() => setSearchPendingOnly((cur) => !cur)}
         >
-          <label>Pending only</label>
+          <label className="min-w-fit">Pending only</label>
         </Checkbox>
+        <Button color="danger" className="ml-auto text-white" isIconOnly>
+          <TrashIcon className="h-7 w-7" />
+        </Button>
       </div>
       <Spacer y={4} />
       {isLoading ? (
